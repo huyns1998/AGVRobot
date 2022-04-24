@@ -1,0 +1,5 @@
+queue.c:48:1:bufInit	16	static
+queue.c:65:1:bufNumItems	16	static
+queue.c:78:1:bufIsEmpty	16	static
+queue.c:92:1:bufEnDat	32	static
+queue.c:124:1:bufDeDat	32	static
