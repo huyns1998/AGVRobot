@@ -60,6 +60,33 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define INT1_Pin GPIO_PIN_0
+#define INT1_GPIO_Port GPIOA
+#define INT2_Pin GPIO_PIN_1
+#define INT2_GPIO_Port GPIOA
+#define DC1_C2_Pin GPIO_PIN_2
+#define DC1_C2_GPIO_Port GPIOA
+#define DC2_C2_Pin GPIO_PIN_3
+#define DC2_C2_GPIO_Port GPIOA
+#define INT3_Pin GPIO_PIN_4
+#define INT3_GPIO_Port GPIOA
+#define INT4_Pin GPIO_PIN_5
+#define INT4_GPIO_Port GPIOA
+#define DC2_TIM_PWM_Pin GPIO_PIN_9
+#define DC2_TIM_PWM_GPIO_Port GPIOE
+#define DC1_TIM_PWM_Pin GPIO_PIN_14
+#define DC1_TIM_PWM_GPIO_Port GPIOE
+#define DC2_TIM_IC_Pin GPIO_PIN_10
+#define DC2_TIM_IC_GPIO_Port GPIOB
+#define DC1_TIM_IC_Pin GPIO_PIN_3
+#define DC1_TIM_IC_GPIO_Port GPIOB
+#define MPU_INT_Pin GPIO_PIN_5
+#define MPU_INT_GPIO_Port GPIOB
+#define MPU_INT_EXTI_IRQn EXTI9_5_IRQn
+#define MPU_SCL_Pin GPIO_PIN_6
+#define MPU_SCL_GPIO_Port GPIOB
+#define MPU_SDA_Pin GPIO_PIN_7
+#define MPU_SDA_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

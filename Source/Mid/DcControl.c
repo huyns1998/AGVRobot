@@ -40,7 +40,8 @@
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
 i32_t g_iwErrDc1, g_iwPreErrDc1, g_iwRpmDc1;
-u8_t g_byKp = 20, g_byKd = 5, g_byKi = 0;
+//u8_t g_byKp = 5, g_byKd = 10, g_byKi = 5;
+u8_t g_byKp = 10, g_byKd = 10, g_byKi = 5;
 i32_t g_iwpPartDc1 = 0, g_iwdPartDc1 = 0, g_iwiPartDc1 = 0, g_iwOutputDc1, g_iwPulseDc1;
 
 i32_t g_iwdesPulseDc2, g_iwErrDc2, g_iwPreErrDc2, g_iwRpmDc2;
@@ -50,11 +51,12 @@ dcState g_DirectionDc1 = DC_STOP;
 dcState g_DirectionDc2 = DC_STOP;
 
 u8_t g_run_distance;
+u8_t g_rotate;
 u32_t g_dc1_pulse;
 u32_t g_dc2_pulse;
 
 u32_t g_dc1_pulse_count, g_dc2_pulse_count;
-
+i64_t g_left_pulse_count, g_right_pulse_count, g_left_pulse_count_prev, g_right_pulse_count_prev;
 
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
@@ -146,14 +148,16 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 		{
 //			g_DirectionDc1 = DC_CLOCWISE;
 			g_iwPulseDc1++;
+			g_left_pulse_count++;
 		}
 		else
 		{
 //			g_DirectionDc1 = DC_ANTICLOCKWISE;
 			g_iwPulseDc1--;
+			g_left_pulse_count--;
 		}
 
-		if(g_run_distance == 1)
+		if(g_run_distance == 1 || g_rotate)
 		{
 			g_dc1_pulse_count++;
 //			if(g_dc1_pulse_count >= g_dc1_pulse)
@@ -173,14 +177,16 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 			{
 //					g_DirectionDc2 = DC_CLOCWISE;
 				g_iwPulseDc2++;
+				g_right_pulse_count--;
 			}
 			else
 			{
 //					g_DirectionDc2 = DC_ANTICLOCKWISE;
 				g_iwPulseDc2--;
+				g_right_pulse_count++;
 			}
 
-			if(g_run_distance == 1)
+			if(g_run_distance == 1 || g_rotate)
 			{
 				g_dc2_pulse_count++;
 //				if(g_dc2_pulse_count >= g_dc2_pulse)
@@ -345,7 +351,7 @@ void_t dc2_RotateAntiClockWise(u16_t wRpm)
 /**
   * @brief 	Stop Dc2
   *
-  * @param 	[rpm]:	round per minute
+  * @param 		-	None
   *
   * @return		-	None
   */

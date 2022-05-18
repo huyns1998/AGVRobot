@@ -2,40 +2,82 @@
 #include "dc-Driver.h"
 #include "DcControl.h"
 #include "RobotControl.h"
+#include "queue.h"
+#include "dead-reckoning1.h"
 #include "maincpp.h"
 
-uint8_t pData[10];
+#define RX_BUFFER_SIZE     16
+#define SIZE_QUEUE_DATA_RX 256
+
+u8_t PollRxBuff(void_t);
+void_t checkRobotStopCondition(void_t);
+void_t updateDeltaphi(void_t);
+u8_t pbyDataReceived[3];
+
+typedef enum {
+	RX_STATE_START_BYTE, RX_STATE_DATA_BYTES, RX_STATE_CXOR_BYTE
+} RX_STATE;
+
+/*
+ * Sử dụng kiểu liệt kê Enum liệt kê các trạng thái phản hồi khi nhận dữ liệu.
+ */
+typedef enum {
+	UART_STATE_IDLE,
+	UART_STATE_DATA_RECEIVED,
+	UART_STATE_ACK_RECEIVED,
+	UART_STATE_NACK_RECEIVED,
+	UART_STATE_ERROR,
+	UART_STATE_RX_TIMEOUT,
+
+} UART_STATE;
+
+static u8_t byRxBufState;
+static u8_t byIndexRxBuf;
+static u8_t byCheckXorRxBuf;
+static buffqueue_t serialQueueRx;
+static u8_t pBuffDataRx[SIZE_QUEUE_DATA_RX];
+u8_t byRxBuffer[RX_BUFFER_SIZE] = { 0 };
+static buffqueue_t serialQueueRx;
+u8_t byReceiveData = 0x00;
+MPUData_t g_mpudata;
+
+extern i64_t g_left_pulse_count, g_right_pulse_count, g_left_pulse_count_prev, g_right_pulse_count_prev;
+extern float g_delta_phi_left, g_delta_phi_right;
+extern u8_t g_byrun_coordinate;
+extern Robot_pose_t g_despose;
+extern u8_t g_by_run_to_des;
+
+
+float di;
 int main(void)
 {
+	Robot_pose_t pose;
+
+	pose.coordinate.x = 100;
+	pose.coordinate.y = -100;
+
 	DcControlSetup();
+//	bufInit(&serialQueueRx);
 //	if(!MPU6050_Init())
 //	{
 //		return 0;
 //	}
-	robot_rotateright_angle(185);
+	HAL_UART_Receive_IT(&huart1, pbyDataReceived, 1);
 
-//	robot_backward(70);
-	HAL_UART_Receive_IT(&huart1, pData, 1);
+	robot_forward_to_position(pose);
+
 	while (1)
 	{
-
+		checkRobotStopCondition();
 	}
 
 }
-uint8_t data[4];
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	static int count;
+	HAL_UART_Receive_IT(&huart1, pbyDataReceived, 1);
 
-//	HAL_UART_Receive_IT(&huart1, pData, Size)
-//    HAL_UART_Transmit(&huart1, UART1_rxBuffer, 12, 100);
-	HAL_UART_Receive_IT(&huart1, pData, 1);
-	data[count] = pData[0];
-	count++;
-	if(count == 3)
-	{
-		count = 0;
-	}
+	//push data into FIFO buffer
+	bufEnDat(&serialQueueRx, (u8_p) pbyDataReceived, 1);
 }
 
 /**
@@ -59,50 +101,38 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void_t checkRobotStopCondition(void_t)
 {
-	u8_t status = MPU6050_GetYawValue();
-	if(status == 0)//read success
-	{
 
-	}
-	else
-	{
-		if(status == 2)
-		{
-			MX_I2C1_Init();
-		}
-	}
+	robot_stop();
+
+	Point_t start_pos = get_robot_pose().coordinate;
+	Point_t des_pos = get_robot_despose().coordinate;
+	float direction = cal_direction(start_pos, des_pos);
 
 
-	if(isRun_distance())
+	if(get_robot_pose().theta > direction + 2)
 	{
-	  if(getDc1PulseCount() >= getDc1Despulse() && getDc2PulseCount() >= getDc2Despulse())
-	  {
-		  resetPulse_distance();
-		  robot_stop();
-	  }
+		robot_rotateright();
 	}
-	else if (isRobotRotate())
+	else if (get_robot_pose().theta > direction - 2)
 	{
-		if(getRobotState() == ROBOT_ROTATE_LEFT)
-		{
-			if(fabs(robot_get_current_angle() - robot_get_des_angle()) < 1)
-			{
-				resetPulse_distance();
-				robot_stop();
-			}
-		}
-		else
-		{
-			if(getRobotState() == ROBOT_ROTATE_RIGHT)
-			{
-				if(fabs(robot_get_current_angle() - robot_get_des_angle()) < 1)
-				{
-					resetPulse_distance();
-					robot_stop();
-				}
-			}
-		}
+		robot_rotateleft();
 	}
+
+	float dis = cal_distance(start_pos, des_pos);
+	if(dis > 5)
+	{
+		robot_forward(30);
+	}
+
+}
+
+void_t updateDeltaphi(void_t)
+{
+	g_delta_phi_left = cal_delta_phi_angle(g_left_pulse_count, g_left_pulse_count_prev);
+	g_delta_phi_right = cal_delta_phi_angle(g_right_pulse_count, g_right_pulse_count_prev);
+	g_left_pulse_count_prev = g_left_pulse_count;
+	g_right_pulse_count_prev = g_right_pulse_count;
+	cal_robot_pose();
 }
 
 /**
@@ -115,7 +145,10 @@ void TIM4_IRQHandler(void)
   /* USER CODE END TIM4_IRQn 0 */
   HAL_TIM_IRQHandler(&htim4);
   /* USER CODE BEGIN TIM4_IRQn 1 */
-  checkRobotStopCondition();
+
+  updateDeltaphi();
+//
+//  checkRobotStopCondition();
   /* USER CODE END TIM4_IRQn 1 */
 }
 
@@ -131,6 +164,26 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 1 */
 
   /* USER CODE END USART1_IRQn 1 */
+}
+
+//Handle data from PC to device
+u8_t PollRxBuff(void_t)
+{
+	//Data get from buffer
+	uint8_t byRxData;
+	uint8_t byUartState = (uint8_t) UART_STATE_IDLE;
+
+	while ((bufNumItems(&serialQueueRx) != 0)
+			&& (byUartState == UART_STATE_IDLE))
+	{
+		bufDeDat(&serialQueueRx, &byRxData, 1);
+		if(byRxData == 0x0A)
+		{
+			int a = 0;
+			a++;
+		}
+	}
+	return byUartState;
 }
 
 

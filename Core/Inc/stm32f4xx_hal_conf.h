@@ -26,7 +26,6 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
- /* Exported types ------------------------------------------------------------*/
 
  /**
    * @brief  HAL Status structures definition
@@ -47,6 +46,7 @@
    HAL_UNLOCKED = 0x00U,
    HAL_LOCKED   = 0x01U
  } HAL_LockTypeDef;
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 

@@ -33,12 +33,11 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 #include "typedefs.h"
-
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-#define WHEEL_DIAMETER	64//mm
+
 
 //@ref direction
  enum
@@ -79,7 +78,6 @@ u32_t getDc1PulseCount(void_t);
 u32_t getDc2PulseCount(void_t);
 u8_t isRun_distance(void_t);
 void_t resetPulse_distance(void_t);
-void_t checkRobotStopCondition(void_t);
 void_t robot_forward_distance(u16_t wSpeed, u32_t wDistance);
 u32_t getDc1Despulse(void_t);
 u32_t getDc2Despulse(void_t);

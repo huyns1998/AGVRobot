@@ -1,0 +1,7 @@
+../Source/Utillities/kalman.c:55:6:KalmanFilterInit	24	static
+../Source/Utillities/kalman.c:62:7:KalmanFilter_updateEstimate	32	static
+../Source/Utillities/kalman.c:72:6:KalmanFilter_setMeasurementError	16	static
+../Source/Utillities/kalman.c:77:6:KalmanFilter_setEstimateError	16	static
+../Source/Utillities/kalman.c:82:6:KalmanFilter_setProcessNoise	16	static
+../Source/Utillities/kalman.c:87:7:KalmanFilter_getKalmanGain	4	static
+../Source/Utillities/kalman.c:91:7:KalmanFilter_getEstimateError	4	static

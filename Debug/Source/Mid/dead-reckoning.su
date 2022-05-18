@@ -1,0 +1,10 @@
+dead-reckoning.c:72:7:cal_phi_angle	24	static
+dead-reckoning.c:86:7:cal_delta_phi_angle	24	static
+dead-reckoning.c:98:7:cal_theta_sigma_angle	16	static
+dead-reckoning.c:114:8:cal_robot_pose	24	static
+dead-reckoning.c:153:14:get_robot_pose	24	static
+dead-reckoning.c:165:8:set_robot_run	16	static
+dead-reckoning.c:178:7:cal_sigma_nominal	56	static
+dead-reckoning.c:209:7:cal_distance	48	static
+dead-reckoning.c:224:8:robot_run_to_position	32	static
+dead-reckoning.c:241:14:get_robot_despose	24	static

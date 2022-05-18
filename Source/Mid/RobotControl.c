@@ -46,13 +46,15 @@
 extern dcState g_DirectionDc1;
 extern dcState g_DirectionDc2;
 
+
+
 extern u8_t g_run_distance;
 extern u32_t g_dc1_pulse;
 extern u32_t g_dc2_pulse;
 extern u32_t g_dc1_pulse_count;
 extern u32_t g_dc2_pulse_count;
 
-u8_t g_rotate;
+extern u8_t g_rotate;
 float g_current_angle;
 float g_des_angle;
 
@@ -135,8 +137,8 @@ void robot_stop(void)
   */
 void_t robot_rotateleft(void_t)
 {
-	dc1_RotateAntiClockWise(200);
-	dc2_RotateAntiClockWise(200);
+	dc1_RotateAntiClockWise(100);
+	dc2_RotateAntiClockWise(100);
 
 	g_robotState = getRobotState();
 }
@@ -150,8 +152,8 @@ void_t robot_rotateleft(void_t)
   */
 void_t robot_rotateright(void_t)
 {
-	dc1_RotateClockWise(200);
-	dc2_RotateClockWise(200);
+	dc1_RotateClockWise(100);
+	dc2_RotateClockWise(100);
 
 	g_robotState = getRobotState();
 }
@@ -347,6 +349,21 @@ u8_t isRobotRotate(void_t)
 }
 
 /**
+  * @brief 	Conver angle to pulse
+  *
+  * @param 	-	Angle
+  *
+  * @return		-	pulse
+  */
+u32_t convertAngleToPulse(float angle)
+{
+	float temp = M_PI*WHEEL_BASE*0.1*angle/360;
+	u32_t wResult = convertDistanceToPulse((u32_t)temp);
+
+	return wResult;
+}
+
+/**
   * @brief 	left rotate in an angle
   *
   * @param [angle]	:	angle want to obtain
@@ -357,13 +374,15 @@ void_t robot_rotateleft_angle(float angle)
 {
 	resetPulse_distance();
 
-	g_des_angle = g_current_angle - angle;
+//	g_des_angle = g_current_angle - angle;
+//
+//	if(g_des_angle < -180.0)
+//	{
+//		g_des_angle = 360.0 + g_des_angle;
+//	}
 
-	if(g_des_angle < -180.0)
-	{
-		g_des_angle = 360.0 + g_des_angle;
-	}
-
+	g_dc1_pulse = convertAngleToPulse(angle);
+	g_dc2_pulse = g_dc1_pulse;
 
 	g_rotate = 1;
 	robot_rotateleft();
@@ -381,12 +400,18 @@ void_t robot_rotateright_angle(float angle)
 {
 	resetPulse_distance();
 
-	g_des_angle = g_current_angle + angle;
+//	g_des_angle = g_current_angle + angle;
+//
+//	if(g_des_angle > 180.0)
+//	{
+//		g_des_angle = g_des_angle - 360.0;
+//	}
 
-	if(g_des_angle > 180.0)
-	{
-		g_des_angle = g_des_angle - 360.0;
-	}
+	g_dc1_pulse = convertAngleToPulse(angle);
+	g_dc2_pulse = g_dc1_pulse;
+
+	g_rotate = 1;
+	robot_rotateleft();
 
 	g_rotate = 1;
 	robot_rotateright();
@@ -416,3 +441,10 @@ float robot_get_des_angle(void_t)
 {
 	return g_des_angle;
 }
+
+
+
+
+
+
+

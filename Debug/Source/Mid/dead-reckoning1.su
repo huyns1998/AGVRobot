@@ -1,0 +1,9 @@
+../Source/Mid/dead-reckoning1.c:75:7:cal_phi_angle	24	static
+../Source/Mid/dead-reckoning1.c:89:7:cal_delta_phi_angle	24	static
+../Source/Mid/dead-reckoning1.c:102:7:cal_theta_angle	40	static
+../Source/Mid/dead-reckoning1.c:143:8:cal_robot_pose	24	static
+../Source/Mid/dead-reckoning1.c:166:14:get_robot_pose	40	static
+../Source/Mid/dead-reckoning1.c:178:8:robot_forward_to_position	24	static
+../Source/Mid/dead-reckoning1.c:194:7:cal_distance	48	static
+../Source/Mid/dead-reckoning1.c:210:7:cal_direction	56	static
+../Source/Mid/dead-reckoning1.c:233:14:get_robot_despose	40	static

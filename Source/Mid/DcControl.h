@@ -38,9 +38,6 @@
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-#define SAMPLING_TIME				50
-#define INV_SAMPLING_TIME			20
-
 /**
   * @brief DC_STATE
   */

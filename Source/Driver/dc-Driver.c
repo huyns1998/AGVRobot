@@ -207,7 +207,7 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 419;
+  htim3.Init.Prescaler = 41;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim3.Init.Period = 9999;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -303,38 +303,41 @@ static void MX_TIM2_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-	/* GPIO Ports Clock Enable */
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	__HAL_RCC_GPIOE_CLK_ENABLE();
-	__HAL_RCC_GPIOB_CLK_ENABLE();
+	    /* GPIO Ports Clock Enable */
+	    __HAL_RCC_GPIOA_CLK_ENABLE();
+	    __HAL_RCC_GPIOE_CLK_ENABLE();
+	    __HAL_RCC_GPIOB_CLK_ENABLE();
 
-	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_1, GPIO_PIN_SET);
+	    /*Configure GPIO pin Output Level */
+	    HAL_GPIO_WritePin(GPIOA, INT1_Pin|INT2_Pin, GPIO_PIN_SET);
 
-	/*Configure GPIO pins : PA0 PA1 */
-	GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_5;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+	    /*Configure GPIO pin Output Level */
+	    HAL_GPIO_WritePin(GPIOA, INT3_Pin|INT4_Pin, GPIO_PIN_RESET);
 
-	/*Configure GPIO pin : PA2 */
-	GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3;
-	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+	    /*Configure GPIO pins : INT1_Pin INT2_Pin INT3_Pin INT4_Pin */
+	    GPIO_InitStruct.Pin = INT1_Pin|INT2_Pin|INT3_Pin|INT4_Pin;
+	    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	    GPIO_InitStruct.Pull = GPIO_NOPULL;
+	    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+	    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-	/*Configure GPIO pin : PB5 */
-	GPIO_InitStruct.Pin = GPIO_PIN_5;
-	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	    /*Configure GPIO pins : DC1_C2_Pin DC2_C2_Pin */
+	    GPIO_InitStruct.Pin = DC1_C2_Pin|DC2_C2_Pin;
+	    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	    GPIO_InitStruct.Pull = GPIO_NOPULL;
+	    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-	/* EXTI interrupt init*/
-	HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
-	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+	    /*Configure GPIO pin : MPU_INT_Pin */
+	    GPIO_InitStruct.Pin = MPU_INT_Pin;
+	    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+	    GPIO_InitStruct.Pull = GPIO_NOPULL;
+	    HAL_GPIO_Init(MPU_INT_GPIO_Port, &GPIO_InitStruct);
+
+	    /* EXTI interrupt init*/
+	    HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+	    HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 
 static void MX_TIM4_Init(void)
@@ -351,9 +354,10 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 8399;
+  htim4.Init.Prescaler = 9999;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 999;
+  htim4.Init.Period = 419;
+//  htim4.Init.Period = 8399;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -408,7 +412,6 @@ static void MX_TIM4_Init(void)
 	/* USER CODE BEGIN I2C1_Init 2 */
 
 	/* USER CODE END I2C1_Init 2 */
-
 }
 
  /**
